@@ -5,9 +5,9 @@
     "main": "cp.js",
     "scripts": {
 	"build": "tsc convert.ts && node convert.js > cp.d.ts",
-	"test": "echo \"Error: no test specified\" && exit 1"
+	"test": "tsc cp.d.ts test.ts"
     },
-    "author": "",
+    "author": "Gavin Haynes",
     "license": "ISC",
     "dependencies": {
 	"@types/node": "^8.5.2",

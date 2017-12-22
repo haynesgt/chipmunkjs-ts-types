@@ -1,4 +1,8 @@
-To compile, run
+To compile, run the following:
 
 npm install
 npm run build
+
+
+To use the library, add 'cp.d.ts' to the include path of your compilation options.
+For example, to compile 'test.ts', run 'tsc cp.d.ts test.ts'.
