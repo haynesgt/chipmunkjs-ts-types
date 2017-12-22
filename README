@@ -1,0 +1,4 @@
+To compile, run
+
+npm install
+npm run build

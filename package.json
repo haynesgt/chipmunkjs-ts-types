@@ -1,15 +1,22 @@
 {
-  "name": "chipmunkjs-ts-types",
-  "version": "1.0.0",
-  "description": "",
-  "main": "cp.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@types/node": "^8.5.2",
-    "typescript": "^2.6.2"
-  }
+    "name": "chipmunkjs-ts-types",
+    "version": "1.0.0",
+    "description": "",
+    "main": "cp.js",
+    "scripts": {
+	"build": "tsc convert.ts && node convert.js > cp.d.ts",
+	"test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+	"@types/node": "^8.5.2",
+	"babel": "^6.23.0",
+	"babel-core": "^6.26.0",
+	"babel-preset-env": "^1.6.1",
+	"babel-traverse": "^6.26.0",
+	"chipmunk": "^6.1.2",
+	"lodash": "^4.17.4",
+	"typescript": "^2.6.2"
+    }
 }
