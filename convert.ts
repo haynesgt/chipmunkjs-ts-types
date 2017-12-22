@@ -67,22 +67,29 @@ traverse(
 		path.node.left.object.property.name == 'prototype'
 	       ) {
 		let assignTo = path.node.right;
+		let toClasses = [ { className: path.node.left.object.object.name, property: path.node.left.property.name } ];
 		while (assignTo.type === 'AssignmentExpression') {
+		    toClasses.push({ className: assignTo.left.object.object.name, property: assignTo.left.property.name });
 		    assignTo = assignTo.right;
 		}
-		memberName = path.node.left.property.name;
-		if (assignTo.type === 'FunctionExpression') {
-		    members[currentClass] = (members[currentClass] || []);
-		    members[currentClass].push({
-			name: memberName,
-			params: assignTo.params.map((p) => p.name)
-		    });
-		} else {
-		    properties[currentClass] == (properties[currentClass] || []);
-		    properties[currentClass].push(memberName);
-		}
-		if (logTraversal) {
-		    console.log('Member name:', path.node.property.name);
+
+		for (let target of toClasses) {
+		    let currentClass2 = target.className;
+		    classes.push(currentClass2);
+		    memberName = target.property;
+		    if (assignTo.type === 'FunctionExpression') {
+			members[currentClass2] = (members[currentClass2] || []);
+			members[currentClass2].push({
+			    name: memberName,
+			    params: assignTo.params.map((p) => p.name)
+			});
+		    } else {
+			properties[currentClass2] = (properties[currentClass2] || []);
+			properties[currentClass2].push(memberName);
+		    }
+		    if (logTraversal) {
+			console.log('Member name:', path.node.property.name);
+		    }
 		}
 	    }
 	    if (path.node.type === 'AssignmentExpression' &&
@@ -108,30 +115,56 @@ traverse(
 );
 console.log('declare namespace cp {');
 for (let c of _.uniq(classes.sort())) {
+    console.error(c);
     if (properties[c] || members[c] || statics[c]) {
-	console.log('  class ' + c + ' {');
-	if (statics[c]) {
-	    for (let s of statics[c]) {
-		console.log('    public static ' + s.name + '(' + s.params.join(', ') + '): any;');
-	    }
-	}
-	if (properties[c]) {
-	    for (let p of _.uniq(properties[c].sort())) {
-		console.log('    public ' + p + ': any;');
-	    }
-	}
-	if (constructors[c]) {
-	    console.log('    constructor(' + constructors[c].params.join(', ') + ');');
-	}
-	if (members[c]) {
-	    for (let m of _.uniq(members[c].sort())) {
-		if (!properties[c] || !(properties[c].includes(m.name))) {
-		    console.log('    public ' + m.name + '(' + (m.params).join(', ') + '): any;');
+	if (c[0].match('[a-z]')) {
+	    console.log('  let ' + c + ': {');
+	    if (properties[c]) {
+		for (let p of _.uniq(properties[c].sort())) {
+		    console.log('    ' + p + ': any;');
 		}
 	    }
-	}
+	    if (statics[c]) {
+		for (let s of statics[c]) {
+		    console.log('    ' + s.name + '(' + s.params.join(', ') + '): any;');
+		}
+	    }
 
-	console.log('  }');
+	    if (constructors[c]) {
+		console.log('    (' + constructors[c].params.join(', ') + '): any;');
+	    }
+	    if (members[c]) {
+		for (let m of _.uniq(members[c].sort())) {
+		    if (!properties[c] || !(properties[c].includes(m.name))) {
+			console.log('    public ' + m.name + '(' + (m.params).join(', ') + '): any;');
+		    }
+		}
+	    }
+	    console.log('  }');
+	} else {
+	    console.log('  class ' + c + ' {');
+	    if (statics[c]) {
+		for (let s of statics[c]) {
+		    console.log('    public static ' + s.name + '(' + s.params.join(', ') + '): any;');
+		}
+	    }
+	    if (properties[c]) {
+		for (let p of _.uniq(properties[c].sort())) {
+		    console.log('    public ' + p + ': any;');
+		}
+	    }
+	    if (constructors[c]) {
+		console.log('    constructor(' + constructors[c].params.join(', ') + ');');
+	    }
+	    if (members[c]) {
+		for (let m of _.uniq(members[c].sort())) {
+		    if (!properties[c] || !(properties[c].includes(m.name))) {
+			console.log('    public ' + m.name + '(' + (m.params).join(', ') + '): any;');
+		    }
+		}
+	    }
+	    console.log('  }');
+	}
     } else {
 	console.log('  let ' + c + ': any');
     }

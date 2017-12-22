@@ -1,5 +1,26 @@
 declare namespace cp {
   let ALL_LAYERS: any
+  class Arbiter {
+    public getNormal(i): any;
+    public getShapes(): any;
+    public totalImpulseWithFriction(): any;
+    public totalKE(): any;
+    public ignore(): any;
+    public getA(): any;
+    public getB(): any;
+    public isFirstContact(): any;
+    public getContactPointSet(): any;
+    public totalImpulse(): any;
+    public getPoint(i): any;
+    public getDepth(i): any;
+    public unthread(): any;
+    public update(contacts, handler, a, b): any;
+    public preStep(dt, slop, bias): any;
+    public applyCachedImpulse(dt_coef): any;
+    public applyImpulse(): any;
+    public callSeparate(space): any;
+    public next(body): any;
+  }
   class BB {
     public b: any;
     public l: any;
@@ -15,7 +36,6 @@ declare namespace cp {
     public bb_r: any;
     public bb_t: any;
     public count: any;
-    public isLeaf: any;
     public leafA: any;
     public leafB: any;
     public leaves: any;
@@ -32,35 +52,16 @@ declare namespace cp {
     public stamp: any;
     public velocityFunc: any;
     constructor(staticIndex);
-    public markLeafQuery(leaf, left, tree, func): any;
+    public reindexQuery(func): any;
     public makeNode(a, b): any;
     public getStamp(): any;
     public incrementStamp(): any;
     public makePair(leafA, nextA, leafB, nextB): any;
-    public recycle(tree): any;
-    public clearPairs(tree): any;
-    public recycle(tree): any;
-    public recycle(tree): any;
-    public setA(value): any;
-    public setB(value): any;
-    public otherChild(child): any;
-    public replaceChild(child, value, tree): any;
-    public bbArea(): any;
-    public bbArea(): any;
-    public intersectsBB(bb): any;
-    public intersectsBB(bb): any;
     public subtreeRecycle(node): any;
-    public markLeafQuery(leaf, left, tree, func): any;
-    public getBB(obj, dest): any;
-    public markSubtree(tree, staticRoot, func): any;
-    public markSubtree(tree, staticRoot, func): any;
-    public containsObj(obj): any;
-    public update(tree): any;
-    public addPairs(tree): any;
     public insert(obj, hashid): any;
     public remove(obj, hashid): any;
     public contains(obj, hashid): any;
-    public reindexQuery(func): any;
+    public getBB(obj, dest): any;
     public reindex(): any;
     public reindexObject(obj, hashid): any;
     public pointQuery(point, func): any;
@@ -95,20 +96,43 @@ declare namespace cp {
     public w_bias: any;
     public w_limit: any;
     constructor(m, i);
-    public isRogue(): any;
+    public velocity_func(gravity, damping, dt): any;
     public sanityCheck(): any;
     public getPos(): any;
     public getVel(): any;
     public getAngVel(): any;
     public isSleeping(): any;
     public isStatic(): any;
-    public sanityCheck(): any;
+    public isRogue(): any;
     public setMass(mass): any;
     public setMoment(moment): any;
     public addShape(shape): any;
     public removeShape(shape): any;
     public removeConstraint(constraint): any;
     public setPos(pos): any;
+    public setVel(velocity): any;
+    public setAngVel(w): any;
+    public setAngleInternal(angle): any;
+    public setAngle(angle): any;
+    public sanityCheck(): any;
+    public position_func(dt): any;
+    public resetForces(): any;
+    public applyForce(force, r): any;
+    public applyImpulse(j, r): any;
+    public getVelAtPoint(r): any;
+    public getVelAtWorldPoint(point): any;
+    public getVelAtLocalPoint(point): any;
+    public eachShape(func): any;
+    public eachConstraint(func): any;
+    public eachArbiter(func): any;
+    public local2World(v): any;
+    public world2Local(v): any;
+    public kineticEnergy(): any;
+    public activate(): any;
+    public activateStatic(filter): any;
+    public pushArbiter(arb): any;
+    public sleep(): any;
+    public sleepWithGroup(group): any;
   }
   let BoxShape: any
   class BoxShape2 {
@@ -117,16 +141,6 @@ declare namespace cp {
     public bb_r: any;
     public bb_t: any;
     constructor(body, box);
-    public transformVerts(p, rot): any;
-    public transformAxes(p, rot): any;
-    public cacheData(p, rot): any;
-    public nearestPointQuery(p): any;
-    public segmentQuery(a, b): any;
-    public valueOnAxis(n, d): any;
-    public containsVert(vx, vy): any;
-    public containsVertPartial(vx, vy, n): any;
-    public getNumVerts(): any;
-    public getVert(i): any;
   }
   class CircleShape {
     public bb_b: any;
@@ -134,6 +148,8 @@ declare namespace cp {
     public bb_r: any;
     public bb_t: any;
     public c: any;
+    public collisionCode: any;
+    public collisionTable: any;
     public r: any;
     public tc: any;
     public type: any;
@@ -149,8 +165,6 @@ declare namespace cp {
     public body_a: any;
     public body_b: any;
     public bounce: any;
-    public collisionCode: any;
-    public collisionTable: any;
     public contacts: any;
     public dist: any;
     public e: any;
@@ -177,29 +191,10 @@ declare namespace cp {
     public thread_b_prev: any;
     public u: any;
     constructor();
-    public isFirstContact(): any;
     public begin(arb, space): any;
+    public preSolve(arb, space): any;
     public postSolve(arb, space): any;
     public separate(arb, space): any;
-    public getShapes(): any;
-    public totalImpulse(): any;
-    public totalImpulseWithFriction(): any;
-    public totalKE(): any;
-    public ignore(): any;
-    public getA(): any;
-    public getB(): any;
-    public preSolve(arb, space): any;
-    public getContactPointSet(): any;
-    public getNormal(i): any;
-    public getPoint(i): any;
-    public getDepth(i): any;
-    public unthread(): any;
-    public update(contacts, handler, a, b): any;
-    public preStep(dt, slop, bias): any;
-    public applyCachedImpulse(dt_coef): any;
-    public applyImpulse(): any;
-    public callSeparate(space): any;
-    public next(body): any;
   }
   class Constraint {
     public a: any;
@@ -289,7 +284,36 @@ declare namespace cp {
     public setGrooveA(value): any;
     public setGrooveB(value): any;
   }
+  class Leaf {
+    public isLeaf: any;
+    public intersectsBB(bb): any;
+    public clearPairs(tree): any;
+    public bbArea(): any;
+    public bbArea(): any;
+    public intersectsBB(bb): any;
+    public recycle(tree): any;
+    public markLeafQuery(leaf, left, tree, func): any;
+    public markSubtree(tree, staticRoot, func): any;
+    public containsObj(obj): any;
+    public update(tree): any;
+    public addPairs(tree): any;
+  }
   let NO_GROUP: any
+  class Node {
+    public isLeaf: any;
+    public recycle(tree): any;
+    public setA(value): any;
+    public setB(value): any;
+    public otherChild(child): any;
+    public replaceChild(child, value, tree): any;
+    public bbArea(): any;
+    public intersectsBB(bb): any;
+    public markLeafQuery(leaf, left, tree, func): any;
+    public markSubtree(tree, staticRoot, func): any;
+  }
+  class Pair {
+    public recycle(tree): any;
+  }
   class PinJoint {
     public anchr1: any;
     public anchr2: any;
@@ -324,6 +348,8 @@ declare namespace cp {
     public getImpulse(): any;
   }
   class PolyShape {
+    public collisionCode: any;
+    public collisionTable: any;
     public d: any;
     public n: any;
     public planes: any;
@@ -332,8 +358,17 @@ declare namespace cp {
     public type: any;
     public verts: any;
     constructor(body, verts, offset);
-    public compare(v): any;
+    public segmentQuery(a, b): any;
     public setVerts(verts, offset): any;
+    public transformAxes(p, rot): any;
+    public cacheData(p, rot): any;
+    public nearestPointQuery(p): any;
+    public transformVerts(p, rot): any;
+    public valueOnAxis(n, d): any;
+    public containsVert(vx, vy): any;
+    public containsVertPartial(vx, vy, n): any;
+    public getNumVerts(): any;
+    public getVert(i): any;
   }
   class RatchetJoint {
     public angle: any;
@@ -362,6 +397,10 @@ declare namespace cp {
     public applyImpulse(): any;
     public getImpulse(): any;
   }
+  class SegmentQueryInfo {
+    public hitPoint(start, end): any;
+    public hitDist(start, end): any;
+  }
   class SegmentShape {
     public a: any;
     public a_tangent: any;
@@ -371,6 +410,8 @@ declare namespace cp {
     public bb_l: any;
     public bb_r: any;
     public bb_t: any;
+    public collisionCode: any;
+    public collisionTable: any;
     public n: any;
     public r: any;
     public ta: any;
@@ -406,20 +447,18 @@ declare namespace cp {
     public t: any;
     public u: any;
     constructor(body);
-    public setBody(body): any;
+    public active(): any;
     public setElasticity(e): any;
     public setLayers(layers): any;
     public setSensor(sensor): any;
     public setCollisionType(collision_type): any;
     public getBody(): any;
-    public active(): any;
     public setFriction(u): any;
+    public setBody(body): any;
     public cacheBB(): any;
     public update(pos, rot): any;
     public pointQuery(p): any;
     public getBB(): any;
-    public hitPoint(start, end): any;
-    public hitDist(start, end): any;
   }
   class SimpleMotor {
     public iSum: any;
@@ -482,7 +521,7 @@ declare namespace cp {
     public staticBody: any;
     public staticShapes: any;
     constructor();
-    public reindexShapesForBody(body): any;
+    public reindexStatic(): any;
     public getCurrentTimeStep(): any;
     public isLocked(): any;
     public addCollisionHandler(a, b, begin, preSolve, postSolve, separate): any;
@@ -505,18 +544,13 @@ declare namespace cp {
     public eachBody(func): any;
     public eachShape(func): any;
     public eachConstraint(func): any;
-    public reindexStatic(): any;
-    public reindexShape(shape): any;
     public setIterations(iter): any;
+    public reindexShape(shape): any;
+    public reindexShapesForBody(body): any;
     public useSpatialHash(dim, count): any;
     public activateBody(body): any;
     public deactivateBody(body): any;
-    public activate(): any;
-    public activateStatic(filter): any;
-    public pushArbiter(arb): any;
     public processComponents(dt): any;
-    public sleep(): any;
-    public sleepWithGroup(group): any;
     public activateShapesTouchingShape(shape): any;
     public pointQuery(point, layers, group, func): any;
     public pointQueryFirst(point, layers, group): any;
@@ -539,10 +573,19 @@ declare namespace cp {
     constructor(staticIndex);
     public collideStatic(staticIndex, func): any;
   }
+  class SplittingPlane {
+    public compare(v): any;
+  }
   class Vect {
     public x: any;
     public y: any;
     constructor(x, y);
+    public add(v2): any;
+    public sub(v2): any;
+    public neg(): any;
+    public mult(s): any;
+    public project(v2): any;
+    public rotate(v2): any;
   }
   let areaForCircle: any
   let areaForPoly: any
@@ -559,73 +602,49 @@ declare namespace cp {
   let momentForSegment: any
   let recenterPoly: any
   let resetShapeIdCounter: any
-  class v {
-    public static dot(v1, v2): any;
-    public static len(v): any;
-    public static len2(x, y): any;
-    public static eql(v1, v2): any;
-    public static add(v1, v2): any;
-    public static sub(v1, v2): any;
-    public static neg(v): any;
-    public static mult(v, s): any;
-    public static cross(v1, v2): any;
-    public static perp(v): any;
-    public static pvrperp(v): any;
-    public static project(v1, v2): any;
-    public static rotate(v1, v2): any;
-    public static unrotate(v1, v2): any;
-    public static lengthsq(v): any;
-    public static lengthsq2(x, y): any;
-    public static lerp(v1, v2, t): any;
-    public static normalize(v): any;
-    public static normalize_safe(v): any;
-    public static clamp(v, len): any;
-    public static lerpconst(v1, v2, d): any;
-    public static dist(v1, v2): any;
-    public static distsq(v1, v2): any;
-    public static near(v1, v2, dist): any;
-    public static slerp(v1, v2, t): any;
-    public static slerpconst(v1, v2, a): any;
-    public static forangle(a): any;
-    public static toangle(v): any;
-    public static str(v): any;
-    public a: any;
-    public f: any;
-    public p: any;
-    public t: any;
-    public v_biasx: any;
-    public v_biasy: any;
-    public vx: any;
-    public vy: any;
-    public w: any;
-    public w_bias: any;
-    public x: any;
-    public y: any;
-    constructor(x, y);
-    public resetForces(): any;
-    public add(v2): any;
-    public neg(): any;
-    public mult(s): any;
-    public project(v2): any;
-    public rotate(v2): any;
-    public setVel(velocity): any;
-    public setAngVel(w): any;
-    public setAngleInternal(angle): any;
-    public setAngle(angle): any;
-    public velocity_func(gravity, damping, dt): any;
-    public position_func(dt): any;
-    public sub(v2): any;
-    public applyForce(force, r): any;
-    public applyImpulse(j, r): any;
-    public getVelAtPoint(r): any;
-    public getVelAtWorldPoint(point): any;
-    public getVelAtLocalPoint(point): any;
-    public eachShape(func): any;
-    public eachConstraint(func): any;
-    public eachArbiter(func): any;
-    public local2World(v): any;
-    public world2Local(v): any;
-    public kineticEnergy(): any;
+  let v: {
+    a: any;
+    f: any;
+    p: any;
+    t: any;
+    v_biasx: any;
+    v_biasy: any;
+    vx: any;
+    vy: any;
+    w: any;
+    w_bias: any;
+    x: any;
+    y: any;
+    dot(v1, v2): any;
+    len(v): any;
+    len2(x, y): any;
+    eql(v1, v2): any;
+    add(v1, v2): any;
+    sub(v1, v2): any;
+    neg(v): any;
+    mult(v, s): any;
+    cross(v1, v2): any;
+    perp(v): any;
+    pvrperp(v): any;
+    project(v1, v2): any;
+    rotate(v1, v2): any;
+    unrotate(v1, v2): any;
+    lengthsq(v): any;
+    lengthsq2(x, y): any;
+    lerp(v1, v2, t): any;
+    normalize(v): any;
+    normalize_safe(v): any;
+    clamp(v, len): any;
+    lerpconst(v1, v2, d): any;
+    dist(v1, v2): any;
+    distsq(v1, v2): any;
+    near(v1, v2, dist): any;
+    slerp(v1, v2, t): any;
+    slerpconst(v1, v2, a): any;
+    forangle(a): any;
+    toangle(v): any;
+    str(v): any;
+    (x, y): any;
   }
   let vzero: any
 }
