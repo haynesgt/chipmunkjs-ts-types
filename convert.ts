@@ -37,6 +37,17 @@ traverse(
 		memberName = null;
 		classes.push(currentClass);
 	    }
+	    if (path.node.type === 'AssignmentExpression' &&
+		path.node.left.type === 'MemberExpression' &&
+		path.node.left.object.type === 'Identifier' &&
+		path.node.left.object.name === 'cp' &&
+		path.node.left.property.type === 'Identifier' &&
+		path.node.right.type === 'FunctionExpression'
+	       ) {
+		constructors[path.node.left.property.name] = {
+		    params: path.node.right.params.map((p) => p.name)
+		};
+	    }
 
 	    if (path.node.type === 'AssignmentExpression' &&
 		path.node.left.type === 'MemberExpression' &&
@@ -95,30 +106,34 @@ traverse(
 	}
     }
 );
-
+console.log('declare namespace cp {');
 for (let c of _.uniq(classes.sort())) {
     if (properties[c] || members[c] || statics[c]) {
-	console.log('declare class ' + c + ' {');
+	console.log('  class ' + c + ' {');
 	if (statics[c]) {
 	    for (let s of statics[c]) {
-		console.log('  public static ' + s.name + '(' + s.params.join(', ') + '): any;');
+		console.log('    public static ' + s.name + '(' + s.params.join(', ') + '): any;');
 	    }
 	}
 	if (properties[c]) {
 	    for (let p of _.uniq(properties[c].sort())) {
-		console.log('  public ' + p + ': any;');
+		console.log('    public ' + p + ': any;');
 	    }
+	}
+	if (constructors[c]) {
+	    console.log('    constructor(' + constructors[c].params.join(', ') + ');');
 	}
 	if (members[c]) {
 	    for (let m of _.uniq(members[c].sort())) {
 		if (!properties[c] || !(properties[c].includes(m.name))) {
-		    console.log('  public ' + m.name + '(' + (m.params).join(', ') + '): any;');
+		    console.log('    public ' + m.name + '(' + (m.params).join(', ') + '): any;');
 		}
 	    }
 	}
 
-	console.log('}');
+	console.log('  }');
     } else {
-	console.log('declare let ' + c + ': any');
+	console.log('  let ' + c + ': any');
     }
 }
+console.log('}');

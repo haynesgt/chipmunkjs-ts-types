@@ -11,6 +11,7 @@ var ast = babylon.parse(code);
 var currentClass = null;
 var memberName = null;
 var classes = [];
+var constructors = {};
 var members = {};
 var properties = {};
 var statics = {};
@@ -27,6 +28,16 @@ babel_traverse_1["default"](ast, {
             currentClass = path.node.property.name;
             memberName = null;
             classes.push(currentClass);
+        }
+        if (path.node.type === 'AssignmentExpression' &&
+            path.node.left.type === 'MemberExpression' &&
+            path.node.left.object.type === 'Identifier' &&
+            path.node.left.object.name === 'cp' &&
+            path.node.left.property.type === 'Identifier' &&
+            path.node.right.type === 'FunctionExpression') {
+            constructors[path.node.left.property.name] = {
+                params: path.node.right.params.map(function (p) { return p.name; })
+            };
         }
         if (path.node.type === 'AssignmentExpression' &&
             path.node.left.type === 'MemberExpression' &&
@@ -82,33 +93,38 @@ babel_traverse_1["default"](ast, {
         }
     }
 });
+console.log('declare namespace cp {');
 for (var _i = 0, _a = _.uniq(classes.sort()); _i < _a.length; _i++) {
     var c = _a[_i];
     if (properties[c] || members[c] || statics[c]) {
-        console.log('declare class ' + c + ' {');
+        console.log('  class ' + c + ' {');
         if (statics[c]) {
             for (var _b = 0, _c = statics[c]; _b < _c.length; _b++) {
                 var s = _c[_b];
-                console.log('  public static ' + s.name + '(' + s.params.join(', ') + '): any;');
+                console.log('    public static ' + s.name + '(' + s.params.join(', ') + '): any;');
             }
         }
         if (properties[c]) {
             for (var _d = 0, _e = _.uniq(properties[c].sort()); _d < _e.length; _d++) {
                 var p = _e[_d];
-                console.log('  public ' + p + ': any;');
+                console.log('    public ' + p + ': any;');
             }
+        }
+        if (constructors[c]) {
+            console.log('    constructor(' + constructors[c].params.join(', ') + ');');
         }
         if (members[c]) {
             for (var _f = 0, _g = _.uniq(members[c].sort()); _f < _g.length; _f++) {
                 var m = _g[_f];
                 if (!properties[c] || !(properties[c].includes(m.name))) {
-                    console.log('  public ' + m.name + '(' + (m.params).join(', ') + '): any;');
+                    console.log('    public ' + m.name + '(' + (m.params).join(', ') + '): any;');
                 }
             }
         }
-        console.log('}');
+        console.log('  }');
     }
     else {
-        console.log('declare let ' + c + ': any');
+        console.log('  let ' + c + ': any');
     }
 }
+console.log('}');
