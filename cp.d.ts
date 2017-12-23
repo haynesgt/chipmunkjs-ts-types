@@ -210,7 +210,7 @@ declare namespace cp {
     public preStep(dt): any;
     public applyCachedImpulse(dt_coef): any;
     public applyImpulse(): any;
-    public getImpulse(): any;
+    public getImpulse(joint?: any): any;
     public preSolve(space): any;
     public postSolve(space): any;
     public next(body): any;

@@ -4,7 +4,7 @@
     "description": "",
     "main": "cp.js",
     "scripts": {
-	"build": "tsc convert.ts && node convert.js > cp.d.ts",
+	"build": "tsc convert.ts && node convert.js | tr '\\n' '\\0' | sed 's/\\(class Constraint {[^}]*getImpulse\\)()/\\1(joint?: any)/' | tr '\\0' '\\n' > cp.d.ts",
 	"test": "tsc cp.d.ts test.ts"
     },
     "author": "Gavin Haynes",
