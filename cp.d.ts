@@ -28,7 +28,7 @@ declare namespace cp {
     public t: any;
     constructor(l, b, r, t);
   }
-  class BBTree {
+  class BBTree extends SpatialIndex {
     public A: any;
     public B: any;
     public bb_b: any;
@@ -142,7 +142,7 @@ declare namespace cp {
     public bb_t: any;
     constructor(body, box);
   }
-  class CircleShape {
+  class CircleShape extends Shape {
     public bb_b: any;
     public bb_l: any;
     public bb_r: any;
@@ -215,7 +215,7 @@ declare namespace cp {
     public postSolve(space): any;
     public next(body): any;
   }
-  class DampedRotarySpring {
+  class DampedRotarySpring extends Constraint {
     public damping: any;
     public iSum: any;
     public restAngle: any;
@@ -227,7 +227,7 @@ declare namespace cp {
     public preStep(dt): any;
     public applyImpulse(): any;
   }
-  class DampedSpring {
+  class DampedSpring extends Constraint {
     public anchr1: any;
     public anchr2: any;
     public damping: any;
@@ -246,7 +246,7 @@ declare namespace cp {
     public applyImpulse(): any;
     public getImpulse(): any;
   }
-  class GearJoint {
+  class GearJoint extends Constraint {
     public bias: any;
     public iSum: any;
     public jAcc: any;
@@ -261,7 +261,7 @@ declare namespace cp {
     public getImpulse(): any;
     public setRatio(value): any;
   }
-  class GrooveJoint {
+  class GrooveJoint extends Constraint {
     public anchr2: any;
     public bias: any;
     public clamp: any;
@@ -314,7 +314,7 @@ declare namespace cp {
   class Pair {
     public recycle(tree): any;
   }
-  class PinJoint {
+  class PinJoint extends Constraint {
     public anchr1: any;
     public anchr2: any;
     public bias: any;
@@ -331,7 +331,7 @@ declare namespace cp {
     public applyImpulse(): any;
     public getImpulse(): any;
   }
-  class PivotJoint {
+  class PivotJoint extends Constraint {
     public anchr1: any;
     public anchr2: any;
     public bias: any;
@@ -347,7 +347,7 @@ declare namespace cp {
     public applyImpulse(): any;
     public getImpulse(): any;
   }
-  class PolyShape {
+  class PolyShape extends Shape {
     public collisionCode: any;
     public collisionTable: any;
     public d: any;
@@ -370,7 +370,7 @@ declare namespace cp {
     public getNumVerts(): any;
     public getVert(i): any;
   }
-  class RatchetJoint {
+  class RatchetJoint extends Constraint {
     public angle: any;
     public bias: any;
     public iSum: any;
@@ -384,7 +384,7 @@ declare namespace cp {
     public applyImpulse(): any;
     public getImpulse(joint): any;
   }
-  class RotaryLimitJoint {
+  class RotaryLimitJoint extends Constraint {
     public bias: any;
     public iSum: any;
     public jAcc: any;
@@ -401,7 +401,7 @@ declare namespace cp {
     public hitPoint(start, end): any;
     public hitDist(start, end): any;
   }
-  class SegmentShape {
+  class SegmentShape extends Shape {
     public a: any;
     public a_tangent: any;
     public b: any;
@@ -460,7 +460,7 @@ declare namespace cp {
     public pointQuery(p): any;
     public getBB(): any;
   }
-  class SimpleMotor {
+  class SimpleMotor extends Constraint {
     public iSum: any;
     public jAcc: any;
     public jMax: any;
@@ -471,7 +471,7 @@ declare namespace cp {
     public applyImpulse(): any;
     public getImpulse(): any;
   }
-  class SlideJoint {
+  class SlideJoint extends Constraint {
     public anchr1: any;
     public anchr2: any;
     public bias: any;

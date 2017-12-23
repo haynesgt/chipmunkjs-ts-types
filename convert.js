@@ -15,6 +15,7 @@ var constructors = {};
 var members = {};
 var properties = {};
 var statics = {};
+var parents = {};
 var logTraversal = false;
 babel_traverse_1["default"](ast, {
     enter: function (path) {
@@ -98,12 +99,27 @@ babel_traverse_1["default"](ast, {
                 console.error('Not implemented: static ' + path.node.right.type);
             }
         }
+        if (path.node.type === 'AssignmentExpression' &&
+            path.node.left.type === 'MemberExpression' &&
+            path.node.left.property.type === 'Identifier' &&
+            path.node.left.property.name === 'prototype' &&
+            path.node.right.type === 'CallExpression' &&
+            path.node.right.callee.type === 'MemberExpression' &&
+            path.node.right.callee.object.type === 'Identifier' &&
+            path.node.right.callee.object.name === 'Object' &&
+            path.node.right.callee.property.type === 'Identifier' &&
+            path.node.right.callee.property.name === 'create') {
+            var argument = path.node.right.arguments[0];
+            var parent_1 = argument.object.name;
+            var child = path.node.left.object.name;
+            parents[child] = parents[child] || [];
+            parents[child].push(parent_1);
+        }
     }
 });
 console.log('declare namespace cp {');
 for (var _i = 0, _a = _.uniq(classes.sort()); _i < _a.length; _i++) {
     var c = _a[_i];
-    console.error(c);
     if (properties[c] || members[c] || statics[c]) {
         if (c[0].match('[a-z]')) {
             console.log('  let ' + c + ': {');
@@ -133,7 +149,7 @@ for (var _i = 0, _a = _.uniq(classes.sort()); _i < _a.length; _i++) {
             console.log('  }');
         }
         else {
-            console.log('  class ' + c + ' {');
+            console.log('  class ' + c + (parents[c] ? ' extends ' + parents[c].join(', ') : '') + ' {');
             if (statics[c]) {
                 for (var _h = 0, _j = statics[c]; _h < _j.length; _h++) {
                     var s = _j[_h];

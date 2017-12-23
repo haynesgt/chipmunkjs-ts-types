@@ -18,6 +18,7 @@ let constructors = {};
 let members = {};
 let properties = {};
 let statics = {};
+let parents = {};
 
 let logTraversal = false;
 
@@ -109,13 +110,28 @@ traverse(
 		    console.error('Not implemented: static ' + path.node.right.type);
 		}
 	    }
-
+	    if (path.node.type === 'AssignmentExpression' &&
+		path.node.left.type === 'MemberExpression' &&
+		path.node.left.property.type === 'Identifier' &&
+		path.node.left.property.name === 'prototype' &&
+		path.node.right.type === 'CallExpression' &&
+		path.node.right.callee.type === 'MemberExpression' &&
+		path.node.right.callee.object.type === 'Identifier' &&
+		path.node.right.callee.object.name === 'Object' &&
+		path.node.right.callee.property.type === 'Identifier' &&
+		path.node.right.callee.property.name === 'create'
+	       ) {
+		let argument = path.node.right.arguments[0];
+		let parent = argument.object.name;
+		let child = path.node.left.object.name;
+		parents[child] = parents[child] || [];
+		parents[child].push(parent);
+	    }
 	}
     }
 );
 console.log('declare namespace cp {');
 for (let c of _.uniq(classes.sort())) {
-    console.error(c);
     if (properties[c] || members[c] || statics[c]) {
 	if (c[0].match('[a-z]')) {
 	    console.log('  let ' + c + ': {');
@@ -142,7 +158,7 @@ for (let c of _.uniq(classes.sort())) {
 	    }
 	    console.log('  }');
 	} else {
-	    console.log('  class ' + c + ' {');
+	    console.log('  class ' + c + (parents[c] ? ' extends ' + parents[c].join(', ') : '') + ' {');
 	    if (statics[c]) {
 		for (let s of statics[c]) {
 		    console.log('    public static ' + s.name + '(' + s.params.join(', ') + '): any;');
