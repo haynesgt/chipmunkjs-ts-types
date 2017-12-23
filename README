@@ -1,7 +1,21 @@
-To compile, run the following:
+These are the typings for chipmunk-js, which can be found here (or on npm):
+https://github.com/josephg/Chipmunk-js
+
+The types are auto-generated from the chipmunk-js library.
+Of course, much manual work would be needed to implement everything, but this is a good start.
+I'll try to keep things up to date.
+
+
+
+
+
+To build the types, run the following:
 
 npm install
 npm run build
+
+
+
 
 
 To use the library, add 'cp.d.ts' to the include path of your compilation options.
